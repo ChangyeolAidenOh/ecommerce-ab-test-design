@@ -24,3 +24,7 @@ data/
 
 # Environment
 .env
+ably_analysis_final.md
+project_plan_ab_test_v3.md
+excluded_observations.md
+explore_asos.py
