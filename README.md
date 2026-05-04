@@ -1,6 +1,6 @@
 # E-commerce A/B Test Experiment Design
 
-에이블리 앱 직접 사용 관찰에서 출발한 **A/B 테스트 실험 설계 프로젝트**.
+이커머스 앱 직접 사용 관찰에서 출발한 **A/B 테스트 실험 설계 프로젝트**.
 
 시뮬레이션 기반으로 실험을 설계하고, 4종 방법론을 비교하며, 글로벌 패션 이커머스(ASOS)의 실제 A/B 테스트 데이터로 방법론을 검증했다.
 
@@ -20,13 +20,13 @@
 
 ## Motivation
 
-에이블리 앱(iOS v2.364.0)을 직접 사용하면서 두 가지 문제를 발견했다.
+이커머스 플랫폼 앱(iOS v2.364.0)을 직접 사용하면서 두 가지 문제를 발견했다.
 
 **Case 1 — GIF 피드 밀도:** 홈 피드의 GIF 자동재생을 "실험실" 메뉴에서 유저가 직접 on/off하는 구조는 self-selection bias로 인해 인과적 효과 측정이 불가능하다. 시뮬레이션 결과, self-selection은 실제 효과를 4.0배 과대 추정했다.
 
 **Case 2 — 체형 리뷰 정렬:** 체형 필터(5cm/5kg 버켓)를 활성화해도 상품 목록의 "리뷰 많은순" 정렬은 전체 리뷰 수 기준이다. 정렬 기준을 "내 체형 리뷰 많은순"으로 변경하면 중간 순위 상품에서 의미 있는 재배치가 발생할 수 있다 (Spearman rho=0.82, top-20 overlap=90%).
 
-두 시나리오 모두 에이블리의 마켓플레이스 구조(셀러가 이미지를 직접 등록, 에이블리는 피드 알고리즘만 통제 가능)를 반영한 설계다.
+두 시나리오 모두 해당 플랫폼의 마켓플레이스 구조(셀러가 이미지를 직접 등록, 플랫폼은 피드 알고리즘만 통제 가능)를 반영한 설계다.
 
 ---
 
@@ -149,16 +149,8 @@ ASOS Digital Experiments Dataset (NeurIPS 2021)의 78개 실제 A/B 테스트로
 |---|---|---|
 | 연령대 비율 | 와이즈앱·리테일 2025, 벤처스퀘어 2026.02 | 유저 풀 연령 분포 |
 | 키/체중 평균 | KOSIS 건강검진통계 2024 (국민건강보험공단) | 유저 풀 체형 분포 |
-| 체형 버켓 구조 | 에이블리 앱 스크린샷 (v2.364.0) | 5cm/5kg 버켓 정의 |
+| 체형 버켓 구조 | 앱 스크린샷 (v2.364.0) | 5cm/5kg 버켓 정의 |
 | 외부 검증 | ASOS OCE Dataset (NeurIPS 2021) | 방법론 외부 타당도 |
-
----
-
-## Tech Stack
-
-Python 3.10+ / scipy / statsmodels / numpy / pandas / matplotlib / plotly / streamlit
-
-외부 과금 서비스 없음. MacBook Pro M2 (16GB) 로컬 실행.
 
 ---
 
@@ -166,8 +158,6 @@ Python 3.10+ / scipy / statsmodels / numpy / pandas / matplotlib / plotly / stre
 
 - Liu, C. H. Bryan et al., "Datasets for Online Controlled Experiments," NeurIPS 2021.
 - KOSIS 국가통계포털, 건강검진통계 (국민건강보험공단, 2024).
-- 에이블리 DA 블로그, "서비스 그 이면의 숫자들," 2025.02.
+- DA 블로그, "서비스 그 이면의 숫자들," 2025.02.
 
 ---
-
-**Independent Project** by Changyeol (Aiden) Oh
