@@ -1,8 +1,8 @@
 # E-commerce A/B Test Experiment Design
 
-이커머스 앱 직접 사용 관찰에서 출발한 **A/B 테스트 실험 설계 프로젝트**.
+패션 커머스 제품 실험에서 신규 기능을 출시해도 되는지 판단하기 위해, primary metric뿐 아니라 guardrail, self-selection bias, peeking risk, NIM 기반 비열등성 판단까지 포함한 **실험 의사결정 프레임워크**를 설계했다.
 
-시뮬레이션 기반으로 실험을 설계하고, 4종 방법론을 비교하며, 글로벌 패션 이커머스(ASOS)의 실제 A/B 테스트 데이터로 방법론을 검증했다.
+시뮬레이션으로 설계를 검증하고, ASOS Digital Experiments Dataset(NeurIPS 2021)의 78개 실제 A/B 테스트로 시뮬레이션에서 발견한 실험 운영 리스크가 실제 커머스 실험 데이터에서도 재현되는지 외부 타당도를 확인했다.
 
 ---
 
@@ -18,15 +18,28 @@
 
 ---
 
+## Decision Framework
+
+본 프로젝트는 p-value 하나로 출시 여부를 판단하지 않고, Primary metric, Guardrail, Bayesian posterior를 함께 고려해 다음 의사결정으로 연결한다.
+
+| Primary | Guardrail (NIT) | Bayesian | Decision |
+|---|---|---|---|
+| 개선 (유의) | 비열등 통과 | posterior high | **Rollout** |
+| 개선 (유의) | 비열등 미통과 | posterior high | **Limited rollout** — 세그먼트 제한 또는 추가 실험 |
+| 불확실 (비유의) | 비열등 통과 | posterior moderate | **Extend** — 표본 추가 수집 |
+| 불확실 (비유의) | 비열등 통과 | posterior low | **Discard** — 효과 없이 복잡성만 추가 |
+| 악화 (유의) | 악화 | posterior low | **Stop** — 즉시 중단 |
+| Freq/Bayes 불일치 | — | — | **Review** — 기대 손실 기반 보조 판단 |
+
+---
+
 ## Motivation
 
-이커머스 플랫폼 앱(iOS v2.364.0)을 직접 사용하면서 두 가지 문제를 발견했다.
+패션 커머스 앱의 사용 흐름을 관찰하며, 유저가 직접 기능을 선택하는 구조와 개인화 리뷰 정렬 방식이 실험 설계 관점에서 어떤 편향을 만들 수 있는지 문제를 정의했다.
 
-**Case 1 — GIF 피드 밀도:** 홈 피드의 GIF 자동재생을 "실험실" 메뉴에서 유저가 직접 on/off하는 구조는 self-selection bias로 인해 인과적 효과 측정이 불가능하다. 시뮬레이션 결과, self-selection은 실제 효과를 4.0배 과대 추정했다.
+**Case 1 — GIF 피드 밀도:** 홈 피드의 GIF 자동재생을 유저가 직접 on/off하는 구조는 self-selection bias로 인해 인과적 효과 측정이 불가능하다. 시뮬레이션 결과, self-selection은 실제 효과를 4.0배 과대 추정했다. 마켓플레이스 구조(셀러가 이미지를 직접 등록, 플랫폼은 피드 알고리즘만 통제 가능)를 반영하여 서버사이드 무작위 배정 기반 실험을 설계했다.
 
-**Case 2 — 체형 리뷰 정렬:** 체형 필터(5cm/5kg 버켓)를 활성화해도 상품 목록의 "리뷰 많은순" 정렬은 전체 리뷰 수 기준이다. 정렬 기준을 "내 체형 리뷰 많은순"으로 변경하면 중간 순위 상품에서 의미 있는 재배치가 발생할 수 있다 (Spearman rho=0.82, top-20 overlap=90%).
-
-두 시나리오 모두 해당 플랫폼의 마켓플레이스 구조(셀러가 이미지를 직접 등록, 플랫폼은 피드 알고리즘만 통제 가능)를 반영한 설계다.
+**Case 2 — 체형 리뷰 정렬:** 체형 필터(5cm/5kg 버켓)를 활성화해도 상품 목록의 "리뷰 많은순" 정렬은 전체 리뷰 수 기준이다. 정렬 기준을 "내 체형 리뷰 많은순"으로 변경하면 중간 순위 상품에서 의미 있는 재배치가 발생할 수 있다 (Spearman rho=0.82, top-20 overlap=90%). 정렬 변경이 단순 구매 전환뿐 아니라 탐색 행동의 어느 단계(상품 노출 → 리뷰 진입 → 장바구니 → 구매)에 영향을 주는지 funnel touchpoint 기록을 설계에 포함했다.
 
 ---
 
@@ -39,31 +52,38 @@ ecommerce-ab-test-design/
 │   ├── case2_review_sort_order.md           #   Case 2: 체형 리뷰 정렬 실험
 │   ├── methodology_comparison.md            #   4종 방법론 비교 분석
 │   ├── simulation_parameter_basis.md        #   시뮬레이션 파라미터 근거
-│   └── external_validation.md              #   ASOS 데이터 외부 검증
+│   ├── external_validation.md              #   ASOS 데이터 외부 검증
+│   └── event_logging_spec.md               #   이벤트 로깅 + 실험 마트 설계
 │
-├── simulation/                              # [3순위] 설계 검증용 코드
-│   ├── config.py                            #   실험 파라미터 중앙 관리
-│   ├── data_generator.py                    #   합성 데이터 + 절대수의 법칙 검증
-│   ├── power_analysis.py                    #   표본 크기 / MDE / 검정력
-│   ├── run_frequentist.py                   #   빈도주의 검정
-│   ├── run_bayesian.py                      #   베이지안 AB 검정
-│   ├── run_sequential.py                    #   순차 검정 + Peeking 시뮬레이션
-│   ├── run_non_inferiority.py               #   비열등성 검정 + NIM 민감도
-│   ├── guardrail_monitor.py                 #   가드레일 모니터링
-│   ├── bias_quantifier.py                   #   Self-selection bias 정량화
-│   ├── method_comparator.py                 #   4종 방법론 교차 비교
-│   └── validate_with_asos.py               #   ASOS 데이터 외부 검증
+├── sql/                                     # 실험 지표 집계 SQL
+│   ├── create_experiment_mart.sql
+│   ├── metric_session_cvr.sql
+│   ├── guardrail_bounce_scroll.sql
+│   └── segment_body_type.sql
 │
-├── dashboard/                               # [4순위] Streamlit 대시보드
+├── simulation/                              # 설계 검증용 코드
+│   ├── config.py
+│   ├── data_generator.py
+│   ├── power_analysis.py
+│   ├── run_frequentist.py
+│   ├── run_bayesian.py
+│   ├── run_sequential.py
+│   ├── run_non_inferiority.py
+│   ├── guardrail_monitor.py
+│   ├── bias_quantifier.py
+│   ├── method_comparator.py
+│   └── validate_with_asos.py
+│
+├── dashboard/                               # Streamlit 대시보드
 │   └── app.py
 │
-├── figures/                                 # 시각화 산출물
+├── figures/
 ├── data/                                    # ASOS 데이터셋 (gitignored)
 ├── requirements.txt
 └── README.md
 ```
 
-**산출물 위계:** 설계서(docs) > 시각화(figures) > 코드(simulation) > 대시보드(dashboard)
+**산출물 위계:** 설계서(docs) > SQL(sql) > 시각화(figures) > 코드(simulation) > 대시보드(dashboard)
 
 ---
 
@@ -135,7 +155,7 @@ streamlit run dashboard/app.py
 
 ## External Validation
 
-ASOS Digital Experiments Dataset (NeurIPS 2021)의 78개 실제 A/B 테스트로 시뮬레이션 발견을 검증:
+ASOS Digital Experiments Dataset (NeurIPS 2021)의 78개 실제 A/B 테스트로 외부 타당도를 검증했다. ASOS 데이터는 제안 기능의 효과를 검증하기 위한 것이 아니라, **시뮬레이션에서 발견한 실험 운영 리스크가 실제 커머스 실험 데이터에서도 재현되는지** 확인하기 위한 목적으로 사용했다.
 
 - Peeking 팽창: 시뮬레이션 25.6% ↔ 실제 22.2% **(일치)**
 - Freq vs Bayes 불일치: p=0.057~0.083 구간에서 4건 **(일치)**
@@ -149,8 +169,14 @@ ASOS Digital Experiments Dataset (NeurIPS 2021)의 78개 실제 A/B 테스트로
 |---|---|---|
 | 연령대 비율 | 와이즈앱·리테일 2025, 벤처스퀘어 2026.02 | 유저 풀 연령 분포 |
 | 키/체중 평균 | KOSIS 건강검진통계 2024 (국민건강보험공단) | 유저 풀 체형 분포 |
-| 체형 버켓 구조 | 앱 스크린샷 (v2.364.0) | 5cm/5kg 버켓 정의 |
+| 체형 버켓 구조 | 패션 커머스 앱 스크린샷 | 5cm/5kg 버켓 정의 |
 | 외부 검증 | ASOS OCE Dataset (NeurIPS 2021) | 방법론 외부 타당도 |
+
+---
+
+## Tech Stack
+
+Python 3.10+ / scipy / statsmodels / numpy / pandas / matplotlib / plotly / streamlit / PostgreSQL (SQL spec)
 
 ---
 
@@ -158,6 +184,7 @@ ASOS Digital Experiments Dataset (NeurIPS 2021)의 78개 실제 A/B 테스트로
 
 - Liu, C. H. Bryan et al., "Datasets for Online Controlled Experiments," NeurIPS 2021.
 - KOSIS 국가통계포털, 건강검진통계 (국민건강보험공단, 2024).
-- DA 블로그, "서비스 그 이면의 숫자들," 2025.02.
 
 ---
+
+**Independent Project** by Changyeol (Aiden) Oh
