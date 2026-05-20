@@ -31,13 +31,15 @@
 | 악화 (유의) | 악화 | posterior low | **Stop** — 즉시 중단 |
 | Freq/Bayes 불일치 | — | — | **Review** — 기대 손실 기반 보조 판단 |
 
+Bayesian posterior 기준: high ≥ 95%, moderate 80~95%, low < 80%. Bayesian posterior는 p-value를 대체하는 단독 출시 기준이 아니라, p=0.05~0.08 경계 구간에서 기대 손실(expected loss)과 함께 보는 보조 판단 기준으로 사용했다.
+
 ---
 
 ## Motivation
 
 패션 커머스 앱의 사용 흐름을 관찰하며, 유저가 직접 기능을 선택하는 구조와 개인화 리뷰 정렬 방식이 실험 설계 관점에서 어떤 편향을 만들 수 있는지 문제를 정의했다.
 
-**Case 1 — GIF 피드 밀도:** 홈 피드의 GIF 자동재생을 유저가 직접 on/off하는 구조는 self-selection bias로 인해 인과적 효과 측정이 불가능하다. 시뮬레이션 결과, self-selection은 실제 효과를 4.0배 과대 추정했다. 마켓플레이스 구조(셀러가 이미지를 직접 등록, 플랫폼은 피드 알고리즘만 통제 가능)를 반영하여 서버사이드 무작위 배정 기반 실험을 설계했다.
+**Case 1 — GIF 피드 밀도:** 홈 피드의 GIF 자동재생을 유저가 직접 on/off하는 구조는 self-selection bias로 인해 인과적 효과 측정이 불가능하다. 시뮬레이션에서는 시각 피로에 민감한 유저가 GIF off를 선택하고 이 집단의 baseline CVR이 원래 낮은 구조를 가정했으며, 이 조건에서 self-selection은 실제 효과를 4.0배 과대 추정했다. 마켓플레이스 구조(셀러가 이미지를 직접 등록, 플랫폼은 피드 알고리즘만 통제 가능)를 반영하여 서버사이드 무작위 배정 기반 실험을 설계했다.
 
 **Case 2 — 체형 리뷰 정렬:** 체형 필터(5cm/5kg 버켓)를 활성화해도 상품 목록의 "리뷰 많은순" 정렬은 전체 리뷰 수 기준이다. 정렬 기준을 "내 체형 리뷰 많은순"으로 변경하면 중간 순위 상품에서 의미 있는 재배치가 발생할 수 있다 (Spearman rho=0.82, top-20 overlap=90%). 정렬 변경이 단순 구매 전환뿐 아니라 탐색 행동의 어느 단계(상품 노출 → 리뷰 진입 → 장바구니 → 구매)에 영향을 주는지 funnel touchpoint 기록을 설계에 포함했다.
 
@@ -83,7 +85,7 @@ ecommerce-ab-test-design/
 └── README.md
 ```
 
-**산출물 위계:** 설계서(docs) > SQL(sql) > 시각화(figures) > 코드(simulation) > 대시보드(dashboard)
+**산출물 위계:** 실험 설계서(docs) → 지표 집계 SQL(sql) → 방법론 검증 코드(simulation) → 의사결정 대시보드(dashboard)
 
 ---
 
@@ -155,7 +157,9 @@ streamlit run dashboard/app.py
 
 ## External Validation
 
-ASOS Digital Experiments Dataset (NeurIPS 2021)의 78개 실제 A/B 테스트로 외부 타당도를 검증했다. ASOS 데이터는 제안 기능의 효과를 검증하기 위한 것이 아니라, **시뮬레이션에서 발견한 실험 운영 리스크가 실제 커머스 실험 데이터에서도 재현되는지** 확인하기 위한 목적으로 사용했다.
+ASOS Digital Experiments Dataset(NeurIPS 2021)의 78개 실제 A/B 테스트로 외부 타당도를 검증했다. ASOS OCE Dataset은 글로벌 패션 이커머스 플랫폼에서 수행된 온라인 실험의 일별 누적 통계(count, mean, variance)를 포함한 공개 데이터셋으로, 본 프로젝트에서는 실험별 시간 누적 결과를 재구성해 peeking과 초기 결론 변동성을 점검했다.
+
+ASOS 데이터는 제안 기능의 효과 검증이 아니라, **시뮬레이션에서 발견한 실험 운영 리스크가 실제 커머스 실험에서도 나타나는지** 확인하기 위한 외부 검증 데이터로 사용했다.
 
 - Peeking 팽창: 시뮬레이션 25.6% ↔ 실제 22.2% **(일치)**
 - Freq vs Bayes 불일치: p=0.057~0.083 구간에서 4건 **(일치)**

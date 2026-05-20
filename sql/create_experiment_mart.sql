@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS experiment_session_mart (
     session_id       VARCHAR(64) PRIMARY KEY,
     user_id          VARCHAR(64) NOT NULL,
     experiment_id    VARCHAR(32) NOT NULL,
-    variant          VARCHAR(16) NOT NULL,   -- 'control', 'treatment_a', 'treatment_b'
+    variant          VARCHAR(16) NOT NULL
+        CHECK (variant IN ('control', 'treatment', 'treatment_a', 'treatment_b')),
     session_start_at TIMESTAMP NOT NULL,
     session_end_at   TIMESTAMP,
 

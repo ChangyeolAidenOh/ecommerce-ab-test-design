@@ -19,14 +19,23 @@ ORDER BY variant;
 SELECT
     experiment_id,
     variant,
-    NTILE(10) OVER (
-        PARTITION BY experiment_id, variant
-        ORDER BY session_start_at
-    ) AS decile,
+    decile,
     COUNT(DISTINCT session_id) AS sessions,
     ROUND(AVG(bounce_flag), 5) AS bounce_rate,
     ROUND(AVG(scroll_depth), 1) AS avg_scroll_depth
-FROM experiment_session_mart
-WHERE experiment_id = 'gif_feed_density_v1'
+FROM (
+    SELECT
+        experiment_id,
+        variant,
+        session_id,
+        bounce_flag,
+        scroll_depth,
+        NTILE(10) OVER (
+            PARTITION BY experiment_id, variant
+            ORDER BY session_start_at
+        ) AS decile
+    FROM experiment_session_mart
+    WHERE experiment_id = 'gif_feed_density_v1'
+) sub
 GROUP BY experiment_id, variant, decile
 ORDER BY variant, decile;
