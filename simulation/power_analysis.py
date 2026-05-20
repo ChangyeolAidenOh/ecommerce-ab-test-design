@@ -1,11 +1,4 @@
-"""
-Power analysis for A/B test experiment design.
-Computes sample size, MDE, power, and experiment duration
-for proportion-based metrics (e.g., conversion rate).
-
-Usage:
-    python -m simulation.power_analysis
-"""
+"""Power analysis for A/B test experiment design. Computes sample size, MDE, power, and experiment duration"""
 
 import os
 import sys
@@ -23,30 +16,10 @@ from simulation.config import (
 )
 
 
-# ================================================================
 # CORE FUNCTIONS
-# ================================================================
 
 def compute_sample_size(baseline, mde, alpha=ALPHA, power=POWER):
-    """
-    Compute required sample size per group for two-proportion z-test.
-
-    Parameters
-    ----------
-    baseline : float
-        Control group conversion rate (e.g., 0.032)
-    mde : float
-        Minimum detectable effect in absolute terms (e.g., 0.003)
-    alpha : float
-        Significance level (two-sided)
-    power : float
-        Statistical power (1 - beta)
-
-    Returns
-    -------
-    int
-        Required sample size per group
-    """
+    """Compute required sample size per group for two-proportion z-test"""
     p1 = baseline
     p2 = baseline + mde
     pooled = (p1 + p2) / 2
@@ -62,26 +35,7 @@ def compute_sample_size(baseline, mde, alpha=ALPHA, power=POWER):
 
 
 def compute_mde(baseline, n_per_group, alpha=ALPHA, power=POWER):
-    """
-    Compute minimum detectable effect for given sample size.
-    Uses iterative search since closed-form is not straightforward.
-
-    Parameters
-    ----------
-    baseline : float
-        Control group conversion rate
-    n_per_group : int
-        Sample size per group
-    alpha : float
-        Significance level (two-sided)
-    power : float
-        Statistical power
-
-    Returns
-    -------
-    float
-        Minimum detectable effect (absolute)
-    """
+    """Compute minimum detectable effect for given sample size"""
     z_alpha = stats.norm.ppf(1 - alpha / 2)
     z_beta = stats.norm.ppf(power)
 
@@ -98,25 +52,7 @@ def compute_mde(baseline, n_per_group, alpha=ALPHA, power=POWER):
 
 
 def compute_power(baseline, mde, n_per_group, alpha=ALPHA):
-    """
-    Compute statistical power for given parameters.
-
-    Parameters
-    ----------
-    baseline : float
-        Control group conversion rate
-    mde : float
-        Expected effect size (absolute)
-    n_per_group : int
-        Sample size per group
-    alpha : float
-        Significance level (two-sided)
-
-    Returns
-    -------
-    float
-        Statistical power (0 to 1)
-    """
+    """Compute statistical power for given parameters"""
     p1 = baseline
     p2 = baseline + mde
     pooled = (p1 + p2) / 2
@@ -133,56 +69,22 @@ def compute_power(baseline, mde, n_per_group, alpha=ALPHA):
 
 def estimate_duration(daily_traffic, required_n_per_group, n_variants=2,
                       traffic_fraction=1.0):
-    """
-    Estimate experiment duration in days.
-
-    Parameters
-    ----------
-    daily_traffic : int
-        Daily active users eligible for experiment
-    required_n_per_group : int
-        Required sessions per group from power analysis
-    n_variants : int
-        Number of variants (including control)
-    traffic_fraction : float
-        Fraction of traffic allocated to experiment (e.g., 0.5 for 50%)
-
-    Returns
-    -------
-    int
-        Estimated days to reach required sample size
-    """
+    """Estimate experiment duration in days"""
     daily_per_group = (daily_traffic * traffic_fraction) / n_variants
     if daily_per_group <= 0:
         return float("inf")
     return int(np.ceil(required_n_per_group / daily_per_group))
 
 
-# ================================================================
 # MULTI-ARM ADJUSTMENT
-# ================================================================
 
 def bonferroni_alpha(alpha, n_comparisons):
-    """Bonferroni-corrected alpha for multiple comparisons."""
+    """Bonferroni-corrected alpha for multiple comparisons"""
     return alpha / n_comparisons
 
 
 def benjamini_hochberg(p_values, alpha=ALPHA):
-    """
-    Benjamini-Hochberg procedure for controlling FDR.
-
-    Parameters
-    ----------
-    p_values : list of float
-        Raw p-values from multiple tests
-    alpha : float
-        Desired FDR level
-
-    Returns
-    -------
-    list of bool
-        Whether each test is significant after BH correction
-    """
+    """Benjamini-Hochberg procedure for controlling FDR"""
     n = len(p_values)
     sorted_indices = np.argsort(p_values)
     sorted_p = np.array(p_values)[sorted_indices]
@@ -202,9 +104,7 @@ def benjamini_hochberg(p_values, alpha=ALPHA):
     return significant
 
 
-# ================================================================
 # VISUALIZATION
-# ================================================================
 
 def plot_power_curve(baseline, alpha=ALPHA, power=POWER,
                      mde_range=None, save_path=None):
@@ -289,9 +189,7 @@ def plot_duration_vs_mde(baseline, daily_traffic, n_variants=2,
     return fig
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     print("=" * 60)
@@ -364,9 +262,7 @@ def main():
     pwr2 = compute_power(b2, mde2, n2)
     print(f"\n  Power at n={n2:,}, MDE={mde2*100:.1f}%p: {pwr2:.3f}")
 
-    # ============================================================
     # Generate figures
-    # ============================================================
     print("\n" + "=" * 60)
     print("Generating figures...")
     print("=" * 60)

@@ -1,11 +1,4 @@
-"""
-Cross-method comparison framework.
-Runs Frequentist, Bayesian, Sequential, and Non-Inferiority tests
-on the same experiment data and compares conclusions.
-
-Usage:
-    python -m simulation.method_comparator
-"""
+"""Cross-method comparison framework. Runs Frequentist, Bayesian, Sequential, and Non-Inferiority tests"""
 
 import os
 import sys
@@ -27,32 +20,13 @@ from simulation.run_bayesian import bayesian_ab_test
 from simulation.run_non_inferiority import non_inferiority_test
 
 
-# ================================================================
 # UNIFIED COMPARISON
-# ================================================================
 
 def compare_all_methods(control_converted, treatment_converted,
                         control_guardrail=None, treatment_guardrail=None,
                         guardrail_nim=0.01, guardrail_direction="upper",
                         alpha=ALPHA, bayesian_threshold=0.95):
-    """
-    Run all four methods on the same data and return unified results.
-
-    Parameters
-    ----------
-    control_converted : array-like
-        Binary conversion outcomes for control
-    treatment_converted : array-like
-        Binary conversion outcomes for treatment
-    control_guardrail : array-like or None
-        Binary guardrail metric for control
-    treatment_guardrail : array-like or None
-        Binary guardrail metric for treatment
-
-    Returns
-    -------
-    dict with results from each method and agreement summary
-    """
+    """Run all four methods on the same data and return unified results"""
     c_conv = int(np.sum(control_converted))
     c_total = len(control_converted)
     t_conv = int(np.sum(treatment_converted))
@@ -125,7 +99,7 @@ def compare_all_methods(control_converted, treatment_converted,
 
 
 def generate_comparison_table(results):
-    """Format comparison results as a readable table."""
+    """Format comparison results as a readable table"""
     lines = []
     lines.append(f"{'Method':<20} {'Conclusion':<25} {'Key Metric':<30}")
     lines.append("-" * 75)
@@ -163,21 +137,12 @@ def generate_comparison_table(results):
     return "\n".join(lines)
 
 
-# ================================================================
 # BOUNDARY CONDITION FINDER
-# ================================================================
 
 def find_disagreement_boundary(baseline=0.032, n_per_group=50_000,
                                alpha=ALPHA, bayesian_threshold=0.95,
                                seed=RANDOM_SEED):
-    """
-    Find the effect size where Frequentist and Bayesian disagree.
-    Searches for the boundary where one says significant and the other doesn't.
-
-    Returns
-    -------
-    dict with boundary_effect, freq_conclusion, bayes_conclusion
-    """
+    """Find the effect size where Frequentist and Bayesian disagree"""
     rng = np.random.default_rng(seed)
     effects = np.arange(0.0005, 0.005, 0.0002)
     disagreements = []
@@ -207,9 +172,7 @@ def find_disagreement_boundary(baseline=0.032, n_per_group=50_000,
     return disagreements
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     rng = np.random.default_rng(RANDOM_SEED)

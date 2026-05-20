@@ -1,10 +1,4 @@
-"""
-Bayesian A/B testing using Beta-Binomial conjugate model.
-No MCMC — analytical posterior via scipy.stats.beta.
-
-Usage:
-    python -m simulation.run_bayesian
-"""
+"""Bayesian A/B testing using Beta-Binomial conjugate model. No MCMC — analytical posterior via scipy.stats.beta"""
 
 import os
 import sys
@@ -19,19 +13,10 @@ from simulation.data_generator import (
 )
 
 
-# ================================================================
 # POSTERIOR COMPUTATION
-# ================================================================
 
 def compute_posterior(successes, trials, prior_alpha=1, prior_beta=1):
-    """
-    Compute Beta posterior parameters.
-    Prior: Beta(prior_alpha, prior_beta). Default is uniform Beta(1,1).
-
-    Returns
-    -------
-    dict with alpha, beta (posterior parameters), mean, ci_lower, ci_upper
-    """
+    """Compute Beta posterior parameters"""
     post_alpha = prior_alpha + successes
     post_beta = prior_beta + (trials - successes)
     dist = stats.beta(post_alpha, post_beta)
@@ -46,27 +31,11 @@ def compute_posterior(successes, trials, prior_alpha=1, prior_beta=1):
     }
 
 
-# ================================================================
 # COMPARISON METRICS
-# ================================================================
 
 def probability_of_improvement(post_a, post_b, n_samples=100_000,
                                seed=RANDOM_SEED):
-    """
-    P(B > A) via Monte Carlo sampling from posteriors.
-
-    Parameters
-    ----------
-    post_a : dict
-        Posterior for control (from compute_posterior)
-    post_b : dict
-        Posterior for treatment (from compute_posterior)
-
-    Returns
-    -------
-    float
-        Probability that treatment is better than control
-    """
+    """P(B > A) via Monte Carlo sampling from posteriors"""
     rng = np.random.default_rng(seed)
     samples_a = rng.beta(post_a["alpha"], post_a["beta"], n_samples)
     samples_b = rng.beta(post_b["alpha"], post_b["beta"], n_samples)
@@ -74,14 +43,7 @@ def probability_of_improvement(post_a, post_b, n_samples=100_000,
 
 
 def expected_loss(post_a, post_b, n_samples=100_000, seed=RANDOM_SEED):
-    """
-    Expected loss of choosing B over A.
-    If B is actually worse, how much do we lose on average?
-
-    Returns
-    -------
-    dict with loss_choose_b (loss if we pick B) and loss_choose_a
-    """
+    """Expected loss of choosing B over A"""
     rng = np.random.default_rng(seed)
     samples_a = rng.beta(post_a["alpha"], post_a["beta"], n_samples)
     samples_b = rng.beta(post_b["alpha"], post_b["beta"], n_samples)
@@ -97,13 +59,7 @@ def expected_loss(post_a, post_b, n_samples=100_000, seed=RANDOM_SEED):
 
 def compute_lift_distribution(post_a, post_b, n_samples=100_000,
                               seed=RANDOM_SEED):
-    """
-    Distribution of relative lift: (B - A) / A.
-
-    Returns
-    -------
-    dict with mean_lift, median_lift, ci_lower, ci_upper (95% HDI)
-    """
+    """Distribution of relative lift: (B - A) / A"""
     rng = np.random.default_rng(seed)
     samples_a = rng.beta(post_a["alpha"], post_a["beta"], n_samples)
     samples_b = rng.beta(post_b["alpha"], post_b["beta"], n_samples)
@@ -118,26 +74,13 @@ def compute_lift_distribution(post_a, post_b, n_samples=100_000,
     }
 
 
-# ================================================================
 # FULL BAYESIAN AB TEST
-# ================================================================
 
 def bayesian_ab_test(control_conversions, control_total,
                      treatment_conversions, treatment_total,
                      prior_alpha=1, prior_beta=1,
                      threshold=0.95, seed=RANDOM_SEED):
-    """
-    Run complete Bayesian AB test.
-
-    Parameters
-    ----------
-    threshold : float
-        Decision threshold for P(B > A). Default 0.95.
-
-    Returns
-    -------
-    dict with posteriors, prob_improvement, expected_loss, lift, decision
-    """
+    """Run complete Bayesian AB test"""
     post_ctrl = compute_posterior(
         control_conversions, control_total, prior_alpha, prior_beta
     )
@@ -167,9 +110,7 @@ def bayesian_ab_test(control_conversions, control_total,
     }
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     print("Generating experiment data...")

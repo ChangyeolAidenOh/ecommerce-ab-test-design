@@ -1,11 +1,4 @@
-"""
-Sequential testing and peeking problem simulation.
-Demonstrates why checking p-values mid-experiment inflates Type I error,
-and implements SPRT as an alternative.
-
-Usage:
-    python -m simulation.run_sequential
-"""
+"""Sequential testing and peeking problem simulation. Demonstrates why checking p-values mid-experiment inflates Type I error,"""
 
 import os
 import sys
@@ -22,37 +15,12 @@ from simulation.config import (
 )
 
 
-# ================================================================
 # PEEKING PROBLEM SIMULATION
-# ================================================================
 
 def simulate_peeking(n_per_group=10_000, n_simulations=N_SIMULATIONS,
                      peek_interval=500, baseline_rate=0.032,
                      true_effect=0.0, alpha=ALPHA, seed=RANDOM_SEED):
-    """
-    Simulate the peeking problem: checking p-values at regular intervals
-    when H0 is true (no effect), and measuring how often we falsely reject.
-
-    Parameters
-    ----------
-    n_per_group : int
-        Final sample size per group
-    n_simulations : int
-        Number of experiment simulations
-    peek_interval : int
-        Check p-value every N observations per group
-    baseline_rate : float
-        True conversion rate for both groups (H0: no difference)
-    true_effect : float
-        True effect size (0.0 for H0 simulations)
-    alpha : float
-        Significance level
-
-    Returns
-    -------
-    dict with peek_points, cumulative_false_positive_rates,
-         final_false_positive_rate, nominal_alpha
-    """
+    """Simulate the peeking problem: checking p-values at regular intervals"""
     rng = np.random.default_rng(seed)
     peek_points = list(range(peek_interval, n_per_group + 1, peek_interval))
     if peek_points[-1] != n_per_group:
@@ -99,34 +67,11 @@ def simulate_peeking(n_per_group=10_000, n_simulations=N_SIMULATIONS,
     }
 
 
-# ================================================================
 # SPRT (Sequential Probability Ratio Test)
-# ================================================================
 
 def sprt(control_outcomes, treatment_outcomes, h0_rate=0.032,
          h1_rate=0.035, alpha=ALPHA, beta=0.20):
-    """
-    Sequential Probability Ratio Test for two proportions.
-
-    Parameters
-    ----------
-    control_outcomes : array-like
-        Binary outcomes (0/1) for control, in chronological order
-    treatment_outcomes : array-like
-        Binary outcomes (0/1) for treatment, in chronological order
-    h0_rate : float
-        Conversion rate under null hypothesis
-    h1_rate : float
-        Conversion rate under alternative hypothesis
-    alpha : float
-        Type I error rate
-    beta : float
-        Type II error rate
-
-    Returns
-    -------
-    dict with decision, stopping_point, log_likelihood_ratios, boundaries
-    """
+    """Sequential Probability Ratio Test for two proportions"""
     A = np.log((1 - beta) / alpha)      # upper boundary (reject H0)
     B = np.log(beta / (1 - alpha))      # lower boundary (accept H0)
 
@@ -172,12 +117,10 @@ def sprt(control_outcomes, treatment_outcomes, h0_rate=0.032,
     }
 
 
-# ================================================================
 # VISUALIZATION
-# ================================================================
 
 def plot_peeking_inflation(result, save_path=None):
-    """Plot cumulative false positive rate across peek points."""
+    """Plot cumulative false positive rate across peek points"""
     matplotlib.rcParams.update(MATPLOTLIB_RC)
     fig, ax = plt.subplots()
 
@@ -210,7 +153,7 @@ def plot_peeking_inflation(result, save_path=None):
 
 
 def plot_sprt_path(result, save_path=None):
-    """Plot SPRT log-likelihood ratio path with decision boundaries."""
+    """Plot SPRT log-likelihood ratio path with decision boundaries"""
     matplotlib.rcParams.update(MATPLOTLIB_RC)
     fig, ax = plt.subplots()
 
@@ -244,13 +187,10 @@ def plot_sprt_path(result, save_path=None):
     return fig
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     print("=" * 60)
-    print("PEEKING PROBLEM SIMULATION")
     print("=" * 60)
     print("Simulating 10,000 experiments where H0 is TRUE (no effect)...")
     print("Checking p-value every 500 observations per group...\n")
@@ -278,7 +218,6 @@ def main():
     )
 
     print("\n" + "=" * 60)
-    print("SPRT DEMONSTRATION")
     print("=" * 60)
 
     rng = np.random.default_rng(RANDOM_SEED)

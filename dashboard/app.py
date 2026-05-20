@@ -1,10 +1,4 @@
-"""
-Streamlit dashboard for interactive experiment design exploration.
-Serves as an interactive companion to the experiment design documents.
-
-Usage:
-    streamlit run dashboard/app.py
-"""
+"""Streamlit dashboard for interactive experiment design exploration. Serves as an interactive companion to the experiment design documents"""
 
 import sys
 import os
@@ -25,9 +19,7 @@ from simulation.power_analysis import (
 )
 
 
-# ================================================================
 # PAGE CONFIG
-# ================================================================
 
 st.set_page_config(
     page_title="A/B Test Experiment Designer",
@@ -50,9 +42,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 
 
-# ================================================================
 # TAB 1: POWER CALCULATOR
-# ================================================================
 
 with tab1:
     st.header("Power Calculator")
@@ -120,9 +110,7 @@ with tab1:
         st.plotly_chart(fig, use_container_width=True)
 
 
-# ================================================================
 # TAB 2: PEEKING SIMULATOR
-# ================================================================
 
 with tab2:
     st.header("Peeking Problem Simulator")
@@ -211,9 +199,7 @@ with tab2:
                 )
 
 
-# ================================================================
 # TAB 3: NIM SENSITIVITY
-# ================================================================
 
 with tab3:
     st.header("NIM Sensitivity Analysis")
@@ -300,9 +286,7 @@ with tab3:
             st.write(f"{icon} NIM={nim_val}%p: **{status}**")
 
 
-# ================================================================
 # TAB 4: METHOD COMPARISON
-# ================================================================
 
 with tab4:
     st.header("Method Comparison")
@@ -396,9 +380,7 @@ with tab4:
                     st.success("Both methods agree across all effect sizes.")
 
 
-# ================================================================
 # TAB 5: BUCKET TRADE-OFF
-# ================================================================
 
 with tab5:
     st.header("Body Type Bucket Trade-off")
@@ -475,9 +457,7 @@ with tab5:
         )
 
 
-# ================================================================
 # SIDEBAR
-# ================================================================
 
 with st.sidebar:
     st.markdown("### About")

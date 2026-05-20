@@ -1,11 +1,4 @@
-"""
-Non-inferiority testing for guardrail metrics.
-Implements NIT with NIM sensitivity analysis, directly addressing
-the Ably DA blog's discussion on inferiority → non-inferiority transition.
-
-Usage:
-    python -m simulation.run_non_inferiority
-"""
+"""Non-inferiority testing for guardrail metrics. Implements NIT with NIM sensitivity analysis, directly addressing"""
 
 import os
 import sys
@@ -22,42 +15,12 @@ from simulation.config import (
 )
 
 
-# ================================================================
 # NON-INFERIORITY TEST
-# ================================================================
 
 def non_inferiority_test(control_rate, treatment_rate,
                          control_n, treatment_n,
                          nim, alpha=ALPHA, direction="upper"):
-    """
-    Non-inferiority test for a proportion metric.
-
-    For guardrail metrics, we want to confirm that treatment is
-    "not meaningfully worse" than control.
-
-    Parameters
-    ----------
-    control_rate : float
-        Observed metric rate in control group
-    treatment_rate : float
-        Observed metric rate in treatment group
-    control_n : int
-        Control sample size
-    treatment_n : int
-        Treatment sample size
-    nim : float
-        Non-inferiority margin (absolute).
-        e.g., 0.01 means "up to 1%p increase is acceptable"
-    alpha : float
-        One-sided significance level
-    direction : str
-        "upper" — treatment must not exceed control + NIM (e.g., bounce rate)
-        "lower" — treatment must not fall below control - NIM (e.g., scroll depth)
-
-    Returns
-    -------
-    dict with observed_diff, ci_bound, nim, non_inferior, p_value
-    """
+    """Non-inferiority test for a proportion metric"""
     diff = treatment_rate - control_rate
 
     se = np.sqrt(control_rate * (1 - control_rate) / control_n +
@@ -92,20 +55,12 @@ def non_inferiority_test(control_rate, treatment_rate,
     }
 
 
-# ================================================================
 # NIM SENSITIVITY ANALYSIS
-# ================================================================
 
 def nim_sensitivity_analysis(control_rate, treatment_rate,
                              control_n, treatment_n,
                              nim_range, direction="upper", alpha=ALPHA):
-    """
-    How does the non-inferiority decision change across different NIM values?
-
-    Returns
-    -------
-    list of dicts, one per NIM value
-    """
+    """How does the non-inferiority decision change across different NIM values?"""
     results = []
     for nim in nim_range:
         result = non_inferiority_test(
@@ -120,14 +75,7 @@ def nim_sensitivity_analysis(control_rate, treatment_rate,
 def find_critical_nim(control_rate, treatment_rate,
                       control_n, treatment_n,
                       direction="upper", alpha=ALPHA):
-    """
-    Find the smallest NIM at which non-inferiority is declared.
-    This is the "tipping point" — below this NIM, the test fails.
-
-    Returns
-    -------
-    float or None
-    """
+    """Find the smallest NIM at which non-inferiority is declared"""
     low, high = 0.0001, 0.10
     for _ in range(100):
         mid = (low + high) / 2
@@ -144,22 +92,13 @@ def find_critical_nim(control_rate, treatment_rate,
     return round(high, 5)
 
 
-# ================================================================
 # INFERIORITY vs NON-INFERIORITY COMPARISON
-# ================================================================
 
 def compare_inferiority_vs_non_inferiority(
     control_rate, treatment_rate, control_n, treatment_n,
     nim, alpha=ALPHA, direction="upper"
 ):
-    """
-    Compare inferiority test (standard two-sided) vs non-inferiority test.
-    Directly addresses Ably DA blog's transition discussion.
-
-    Returns
-    -------
-    dict with both test results and comparison
-    """
+    """Compare inferiority test (standard two-sided) vs non-inferiority test"""
     diff = treatment_rate - control_rate
     se = np.sqrt(control_rate * (1 - control_rate) / control_n +
                  treatment_rate * (1 - treatment_rate) / treatment_n)
@@ -198,12 +137,10 @@ def compare_inferiority_vs_non_inferiority(
     }
 
 
-# ================================================================
 # VISUALIZATION
-# ================================================================
 
 def plot_nim_sensitivity(results, save_path=None):
-    """Plot NIM sensitivity: decision boundary visualization."""
+    """Plot NIM sensitivity: decision boundary visualization"""
     matplotlib.rcParams.update(MATPLOTLIB_RC)
     fig, ax = plt.subplots()
 
@@ -237,9 +174,7 @@ def plot_nim_sensitivity(results, save_path=None):
     return fig
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     rng = np.random.default_rng(RANDOM_SEED)

@@ -1,11 +1,4 @@
-"""
-Frequentist hypothesis testing for A/B experiments.
-Two-proportion z-test (conversion rate), Welch's t-test (continuous metrics),
-and confidence intervals for effect size.
-
-Usage:
-    python -m simulation.run_frequentist
-"""
+"""Frequentist hypothesis testing for A/B experiments. Two-proportion z-test (conversion rate), Welch's t-test (continuous metrics),"""
 
 import os
 import sys
@@ -20,20 +13,12 @@ from simulation.data_generator import (
 )
 
 
-# ================================================================
 # PROPORTION TESTS (conversion rate)
-# ================================================================
 
 def z_test_proportions(control_conversions, control_total,
                        treatment_conversions, treatment_total,
                        alpha=ALPHA):
-    """
-    Two-proportion z-test for conversion rate comparison.
-
-    Returns
-    -------
-    dict with z_stat, p_value, significant, effect, ci_lower, ci_upper
-    """
+    """Two-proportion z-test for conversion rate comparison"""
     p1 = control_conversions / control_total
     p2 = treatment_conversions / treatment_total
     effect = p2 - p1
@@ -78,18 +63,10 @@ def z_test_from_groups(control_converted, treatment_converted, alpha=ALPHA):
     return z_test_proportions(c_conv, c_total, t_conv, t_total, alpha)
 
 
-# ================================================================
 # CONTINUOUS METRIC TESTS (time on page, scroll depth, etc.)
-# ================================================================
 
 def welch_t_test(control_values, treatment_values, alpha=ALPHA):
-    """
-    Welch's t-test for comparing means of continuous metrics.
-
-    Returns
-    -------
-    dict with t_stat, p_value, significant, effect, ci_lower, ci_upper
-    """
+    """Welch's t-test for comparing means of continuous metrics"""
     control = np.asarray(control_values)
     treatment = np.asarray(treatment_values)
 
@@ -114,7 +91,7 @@ def welch_t_test(control_values, treatment_values, alpha=ALPHA):
 
 
 def _welch_df(a, b):
-    """Welch-Satterthwaite degrees of freedom."""
+    """Welch-Satterthwaite degrees of freedom"""
     va, vb = a.var(ddof=1), b.var(ddof=1)
     na, nb = len(a), len(b)
     num = (va / na + vb / nb) ** 2
@@ -122,9 +99,7 @@ def _welch_df(a, b):
     return num / den if den > 0 else 1
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     print("Generating experiment data...")

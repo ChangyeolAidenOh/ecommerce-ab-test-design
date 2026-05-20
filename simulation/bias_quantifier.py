@@ -1,11 +1,4 @@
-"""
-Self-selection bias quantifier.
-Compares effect estimates from self-selection (Ably lab toggle)
-vs randomized controlled trial to quantify selection bias.
-
-Usage:
-    python -m simulation.bias_quantifier
-"""
+"""Self-selection bias quantifier. Compares effect estimates from self-selection (Ably lab toggle)"""
 
 import os
 import sys
@@ -26,18 +19,10 @@ from simulation.data_generator import (
 from simulation.run_frequentist import z_test_from_groups
 
 
-# ================================================================
 # BIAS QUANTIFICATION
-# ================================================================
 
 def compare_selection_vs_rct(rct_data, self_sel_data):
-    """
-    Compare effect estimates from RCT vs self-selection.
-
-    Returns
-    -------
-    dict with rct_effect, self_selection_effect, bias, bias_ratio
-    """
+    """Compare effect estimates from RCT vs self-selection"""
     # RCT effect
     rct_ctrl = rct_data[rct_data["variant"] == "control"]["converted"]
     rct_trt = rct_data[rct_data["variant"] == "treatment_a"]["converted"]
@@ -68,13 +53,7 @@ def compare_selection_vs_rct(rct_data, self_sel_data):
 
 def run_bias_simulations(n_simulations=500, n_users=5_000, n_days=14,
                          config=GIF_CONFIG, seed=RANDOM_SEED):
-    """
-    Run multiple simulations to get distribution of bias estimates.
-
-    Returns
-    -------
-    dict with arrays of rct_effects, ss_effects, biases
-    """
+    """Run multiple simulations to get distribution of bias estimates"""
     rng = np.random.default_rng(seed)
     rct_effects = []
     ss_effects = []
@@ -109,12 +88,10 @@ def run_bias_simulations(n_simulations=500, n_users=5_000, n_days=14,
     }
 
 
-# ================================================================
 # VISUALIZATION
-# ================================================================
 
 def plot_bias_comparison(sim_results, save_path=None):
-    """Plot RCT vs self-selection effect distributions."""
+    """Plot RCT vs self-selection effect distributions"""
     matplotlib.rcParams.update(MATPLOTLIB_RC)
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
@@ -156,13 +133,10 @@ def plot_bias_comparison(sim_results, save_path=None):
     return fig
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     print("=" * 60)
-    print("SELF-SELECTION BIAS QUANTIFICATION")
     print("=" * 60)
 
     # Single run comparison

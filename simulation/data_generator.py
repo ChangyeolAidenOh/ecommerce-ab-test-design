@@ -1,21 +1,11 @@
-"""
-Synthetic e-commerce data generator for A/B test simulation.
-Generates user pools, session behavior, and experiment assignments
-with configurable true effects for ground-truth validation.
+"""Synthetic e-commerce data generator for A/B test simulation. Generates user pools, session behavior, and experiment assignments"""
 
-Usage:
-    python simulation/data_generator.py
-"""
-
-# stdlib
 import os
 import sys
 
-# third-party
 import numpy as np
 import pandas as pd
 
-# local
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from simulation.config import (
     RANDOM_SEED, HEIGHT_DIST, WEIGHT_DIST, AGE_GROUP_PROPORTIONS,
@@ -23,12 +13,10 @@ from simulation.config import (
 )
 
 
-# ================================================================
 # USER POOL GENERATION
-# ================================================================
 
 def generate_user_pool(n, seed=RANDOM_SEED):
-    """Generate synthetic user population with body type attributes."""
+    """Generate synthetic user population with body type attributes"""
     rng = np.random.default_rng(seed)
 
     heights = rng.normal(HEIGHT_DIST["mean"], HEIGHT_DIST["std"], n)
@@ -57,11 +45,7 @@ def generate_user_pool(n, seed=RANDOM_SEED):
 
 
 def _assign_bucket(values, step, floor, ceil):
-    """
-    Assign values to fixed-width buckets matching Ably app review filter.
-    Height: 139cm이하, 140-144, ..., 185-189, 190cm이상 (floor=140, ceil=190)
-    Weight: 39kg이하, 40-44, ..., 85-89, 90kg이상 (floor=40, ceil=90)
-    """
+    """Assign values to fixed-width buckets matching Ably app review filter. Height: 139cm이하, 140-144, ..., 185-189, 190cm이상 (floor=140, ceil=190)"""
     labels = []
     for v in values:
         if v < floor:
@@ -76,12 +60,10 @@ def _assign_bucket(values, step, floor, ceil):
     return labels
 
 
-# ================================================================
 # SESSION GENERATION
-# ================================================================
 
 def generate_sessions(users, n_days=14, mean_sessions_per_day=1.5, seed=RANDOM_SEED):
-    """Generate session-level behavior data for user pool."""
+    """Generate session-level behavior data for user pool"""
     rng = np.random.default_rng(seed)
     records = []
 
@@ -107,9 +89,7 @@ def generate_sessions(users, n_days=14, mean_sessions_per_day=1.5, seed=RANDOM_S
     return df
 
 
-# ================================================================
 # RANDOMIZED EXPERIMENT SIMULATION
-# ================================================================
 
 def simulate_experiment(sessions, config, variant_names=None, seed=RANDOM_SEED):
     """
@@ -145,16 +125,10 @@ def simulate_experiment(sessions, config, variant_names=None, seed=RANDOM_SEED):
     return df
 
 
-# ================================================================
 # SELF-SELECTION SIMULATION (Case 1: GIF toggle)
-# ================================================================
 
 def simulate_self_selection(sessions, users, config, seed=RANDOM_SEED):
-    """
-    Simulate self-selection environment where users choose their own group.
-    Users who opt out (e.g., turn off GIF) have systematically different
-    baseline behavior, creating selection bias.
-    """
+    """Simulate self-selection environment where users choose their own group. Users who opt out (e.g., turn off GIF) have systematically different"""
     rng = np.random.default_rng(seed)
     cfg = config
 
@@ -198,9 +172,7 @@ def simulate_self_selection(sessions, users, config, seed=RANDOM_SEED):
     return df
 
 
-# ================================================================
 # BODY TYPE REVIEW SIMULATION (Case 2)
-# ================================================================
 
 def simulate_review_counts(n_products, users, bucket_step_cm=5, bucket_step_kg=5,
                            seed=RANDOM_SEED):
@@ -256,33 +228,10 @@ def simulate_review_counts(n_products, users, bucket_step_cm=5, bucket_step_kg=5
     return products
 
 
-# ================================================================
 # SORT ORDER OVERLAP ANALYSIS (절대수의 법칙 검증)
-# ================================================================
 
 def analyze_sort_overlap(products, target_bucket, top_n=20):
-    """
-    Compare product rankings between "total review count" sort
-    and "target body-type review count" sort.
-
-    This directly tests the "law of large numbers" concern:
-    if the two rankings are highly correlated, changing the sort
-    order will have minimal effect on what users see.
-
-    Parameters
-    ----------
-    products : list of dicts
-        Output of simulate_review_counts
-    target_bucket : str
-        Body type bucket key (e.g., "160-164_55-59")
-    top_n : int
-        Number of top products to compare overlap
-
-    Returns
-    -------
-    dict with spearman_rho, p_value, top_n_overlap_ratio,
-         rank_changes (products that move most)
-    """
+    """Compare product rankings between "total review count" sort"""
     from scipy import stats as sp_stats
 
     records = []
@@ -344,9 +293,7 @@ def analyze_sort_overlap(products, target_bucket, top_n=20):
     }
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     print("Generating user pool (n=10000)...")

@@ -1,21 +1,13 @@
-"""
-Central configuration for experiment parameters and scenario configs.
-All simulation parameters with sources documented in
-docs/simulation_parameter_basis.md.
-"""
+"""Central configuration for experiment parameters and scenario configs. All simulation parameters with sources documented in"""
 
-# ================================================================
 # GENERAL EXPERIMENT DEFAULTS
-# ================================================================
 
 ALPHA = 0.05
 POWER = 0.80
 N_SIMULATIONS = 10_000
 RANDOM_SEED = 42
 
-# ================================================================
 # PLATFORM PARAMETERS (Ably-inspired)
-# ================================================================
 
 # MAU 9.69M (2026 Q1 disclosure) x ~5% daily activation rate [estimated]
 DAILY_ACTIVE_USERS = 50_000
@@ -32,9 +24,7 @@ BODY_TYPE_FILTER_RATE = 0.15
 # Proportion of products with GIF images in feed [estimated from app]
 GIF_PRODUCT_RATIO = 0.30
 
-# ================================================================
 # CASE 1: GIF FEED DENSITY EXPERIMENT
-# ================================================================
 
 GIF_CONFIG = {
     "baseline_cvr": BASELINE_CVR,
@@ -53,9 +43,7 @@ GIF_CONFIG = {
     },
 }
 
-# ================================================================
 # CASE 2: REVIEW SORT ORDER EXPERIMENT
-# ================================================================
 
 REVIEW_SORT_CONFIG = {
     "baseline_cvr": 0.045,               # body type filter users baseline
@@ -74,9 +62,7 @@ REVIEW_SORT_CONFIG = {
     },
 }
 
-# ================================================================
 # USER POPULATION DISTRIBUTION (for data generator)
-# ================================================================
 
 # Age group proportions
 # Sources:
@@ -144,9 +130,7 @@ CLOTHING_SIZES = [
     "77", "77반", "88", "88반", "99 이상",
 ]
 
-# ================================================================
 # VISUALIZATION DEFAULTS
-# ================================================================
 
 FIG_DIR = "figures"
 FIG_DPI = 150

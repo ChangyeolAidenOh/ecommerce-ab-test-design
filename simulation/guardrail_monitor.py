@@ -1,10 +1,4 @@
-"""
-Guardrail metric monitoring during experiment execution.
-Tracks safety metrics over time and flags violations.
-
-Usage:
-    python -m simulation.guardrail_monitor
-"""
+"""Guardrail metric monitoring during experiment execution. Tracks safety metrics over time and flags violations"""
 
 import os
 import sys
@@ -20,24 +14,10 @@ from simulation.config import (
 from simulation.run_non_inferiority import non_inferiority_test
 
 
-# ================================================================
 # GUARDRAIL DEFINITION
-# ================================================================
 
 def define_guardrail(name, nim, direction, description=""):
-    """
-    Create a guardrail specification.
-
-    Parameters
-    ----------
-    name : str
-        Metric name (e.g., "bounce_rate")
-    nim : float
-        Non-inferiority margin (absolute)
-    direction : str
-        "upper" — metric must not increase beyond NIM
-        "lower" — metric must not decrease beyond NIM
-    """
+    """Create a guardrail specification"""
     return {
         "name": name,
         "nim": nim,
@@ -46,29 +26,11 @@ def define_guardrail(name, nim, direction, description=""):
     }
 
 
-# ================================================================
 # MONITORING
-# ================================================================
 
 def monitor_guardrails(control_metrics, treatment_metrics,
                        guardrails, check_points):
-    """
-    Monitor guardrail metrics at specified check points during experiment.
-
-    Parameters
-    ----------
-    control_metrics : dict
-        {metric_name: array of per-session values}
-    treatment_metrics : dict
-        {metric_name: array of per-session values}
-    guardrails : list of guardrail dicts
-    check_points : list of int
-        Sample sizes at which to check (e.g., [1000, 5000, 10000])
-
-    Returns
-    -------
-    list of dicts, one per check point, each containing per-guardrail results
-    """
+    """Monitor guardrail metrics at specified check points during experiment"""
     timeline = []
 
     for n in check_points:
@@ -124,14 +86,7 @@ def monitor_guardrails(control_metrics, treatment_metrics,
 
 
 def check_early_stop(timeline, consecutive_violations=2):
-    """
-    Recommend early stop if guardrails show INFERIOR status consecutively.
-    UNCONFIRMED (insufficient sample) does NOT trigger early stop.
-
-    Returns
-    -------
-    dict with should_stop, reason, violation_point
-    """
+    """Recommend early stop if guardrails show INFERIOR status consecutively"""
     violation_streak = 0
 
     for point in timeline:
@@ -158,12 +113,10 @@ def check_early_stop(timeline, consecutive_violations=2):
     return {"should_stop": False, "reason": "No consecutive INFERIOR violations"}
 
 
-# ================================================================
 # VISUALIZATION
-# ================================================================
 
 def plot_guardrail_timeline(timeline, metric_name, save_path=None):
-    """Plot guardrail metric over time with NIM bounds."""
+    """Plot guardrail metric over time with NIM bounds"""
     matplotlib.rcParams.update(MATPLOTLIB_RC)
     fig, ax = plt.subplots()
 
@@ -198,16 +151,13 @@ def plot_guardrail_timeline(timeline, metric_name, save_path=None):
     return fig
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     rng = np.random.default_rng(RANDOM_SEED)
     n = 50_000
 
     print("=" * 60)
-    print("GUARDRAIL MONITORING SIMULATION")
     print("=" * 60)
 
     # Simulate guardrail metrics for GIF experiment

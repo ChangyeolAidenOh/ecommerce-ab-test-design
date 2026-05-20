@@ -1,14 +1,4 @@
-"""
-External validation: Apply project methodology to ASOS Digital Experiments Dataset.
-Compares simulation findings with real e-commerce A/B test data.
-
-Dataset: ASOS Digital Experiments Dataset (NeurIPS 2021)
-- 78 real A/B tests from a global fashion e-commerce platform
-- Daily checkpoints with cumulative statistics (count, mean, variance)
-
-Usage:
-    python -m simulation.validate_with_asos
-"""
+"""External validation: Apply project methodology to ASOS Digital Experiments Dataset. Compares simulation findings with real e-commerce A/B test data"""
 
 import os
 import sys
@@ -26,12 +16,10 @@ from simulation.config import ALPHA, FIG_DIR, MATPLOTLIB_RC
 DATA_PATH = "data/asos_digital_experiments_dataset.parquet"
 
 
-# ================================================================
 # DATA LOADING
-# ================================================================
 
 def load_asos_data(path=DATA_PATH):
-    """Load and filter ASOS dataset for analysis."""
+    """Load and filter ASOS dataset for analysis"""
     df = pd.read_parquet(path)
 
     # Use metric_id=1 (primary decision metric) and variant_id=1 (first treatment)
@@ -49,16 +37,10 @@ def load_asos_data(path=DATA_PATH):
     return filtered
 
 
-# ================================================================
 # 1. PEEKING VALIDATION
-# ================================================================
 
 def validate_peeking(data, alpha=ALPHA):
-    """
-    For each experiment, run t-test at every checkpoint.
-    Compare intermediate conclusions with final conclusion.
-    Measures how often peeking leads to premature significance.
-    """
+    """For each experiment, run t-test at every checkpoint. Compare intermediate conclusions with final conclusion"""
     results = []
 
     for exp_id, group in data.groupby("experiment_id"):
@@ -113,9 +95,7 @@ def validate_peeking(data, alpha=ALPHA):
     return pd.DataFrame(results)
 
 
-# ================================================================
 # 2. FREQUENTIST vs BAYESIAN COMPARISON
-# ================================================================
 
 def bayesian_normal_test(mean_c, var_c, n_c, mean_t, var_t, n_t,
                          threshold=0.95, n_samples=100_000, seed=42):
@@ -205,9 +185,7 @@ def validate_method_comparison(data, alpha=ALPHA, bayesian_threshold=0.95):
     return pd.DataFrame(results)
 
 
-# ================================================================
 # 3. GUARDRAIL STABILITY VALIDATION
-# ================================================================
 
 def validate_guardrail_stability(data, alpha=ALPHA):
     """
@@ -265,12 +243,10 @@ def validate_guardrail_stability(data, alpha=ALPHA):
     return pd.DataFrame(results)
 
 
-# ================================================================
 # VISUALIZATION
-# ================================================================
 
 def plot_validation_summary(peeking_df, method_df, stability_df, save_path=None):
-    """Summary visualization of all three validations."""
+    """Summary visualization of all three validations"""
     matplotlib.rcParams.update(MATPLOTLIB_RC)
     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
@@ -320,9 +296,7 @@ def plot_validation_summary(peeking_df, method_df, stability_df, save_path=None)
     return fig
 
 
-# ================================================================
 # MAIN
-# ================================================================
 
 def main():
     print("=" * 60)
@@ -425,7 +399,6 @@ def main():
     # Summary
     # --------------------------------------------------------
     print(f"\n{'=' * 60}")
-    print("VALIDATION SUMMARY")
     print("=" * 60)
     print(f"\n  1. Peeking: {premature_rate:.1%} premature significance rate "
           f"in real data")
