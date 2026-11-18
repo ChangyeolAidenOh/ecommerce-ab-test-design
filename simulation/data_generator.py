@@ -45,7 +45,7 @@ def generate_user_pool(n, seed=RANDOM_SEED):
 
 
 def _assign_bucket(values, step, floor, ceil):
-    """Assign values to fixed-width buckets matching Ably app review filter. Height: 139cm이하, 140-144, ..., 185-189, 190cm이상 (floor=140, ceil=190)"""
+    """Assign values to fixed-width buckets matching app review filter. Height: 139cm이하, 140-144, ..., 185-189, 190cm이상 (floor=140, ceil=190)"""
     labels = []
     for v in values:
         if v < floor:

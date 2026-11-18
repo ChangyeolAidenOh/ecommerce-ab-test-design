@@ -229,7 +229,7 @@ def main():
         print("     but the deterioration is within the NIM.")
         print("     Under inferiority testing: BLOCK launch.")
         print("     Under non-inferiority testing: ALLOW launch.")
-        print("     This is exactly the scenario Ably DA blog discussed.")
+        print("     This is the case where the two tests give opposite launch decisions.")
 
     # Generate NIM sensitivity figure
     print("\n--- Generating NIM sensitivity figure ---")

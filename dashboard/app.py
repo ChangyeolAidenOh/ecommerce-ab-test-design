@@ -451,7 +451,7 @@ with tab5:
         st.dataframe(df_bucket, use_container_width=True, hide_index=True)
 
         st.markdown(
-            f"**Current Ably setting: 5cm/5kg** — "
+            f"**Current app setting: 5cm/5kg** — "
             f"{df_bucket[df_bucket['bucket_size']=='5cm/5kg']['pct_useful'].values[0]}% "
             f"of products have >= {min_useful} target body-type reviews."
         )
@@ -478,6 +478,6 @@ with st.sidebar:
         "**Data Sources**\n"
         "- User params: KOSIS Health Screening 2024\n"
         "- Age ratio: WiseApp/Retail 2025\n"
-        "- Bucket structure: Ably app screenshots\n"
+        "- Bucket structure: app screenshots\n"
         "- Validation: ASOS OCE Dataset (NeurIPS 2021)"
     )

@@ -7,7 +7,7 @@ POWER = 0.80
 N_SIMULATIONS = 10_000
 RANDOM_SEED = 42
 
-# PLATFORM PARAMETERS (Ably-inspired)
+# PLATFORM PARAMETERS (fashion commerce app)
 
 # MAU 9.69M (2026 Q1 disclosure) x ~5% daily activation rate [estimated]
 DAILY_ACTIVE_USERS = 50_000
@@ -77,13 +77,13 @@ AGE_GROUP_PROPORTIONS = {
     "40s_plus": 0.27,    # = 1.0 - 0.73
 }
 
-# Height distribution (cm) — Korean female, Ably user age mix
+# Height distribution (cm) — Korean female, platform user age mix
 # Source: NHIS Health Screening Statistics 2024
 #         (KOSIS, National Health Insurance Service, updated 2026-02-26)
 #   19y-: 161.86cm, 20s: 161.83cm, 30s: 161.91cm, 40s: 160.93cm
-#   Weighted avg by Ably age mix (10s 12%, 20s 30.9%, 30s 30.1%, 40s+ 27%)
+#   Weighted avg by platform age mix (10s 12%, 20s 30.9%, 30s 30.1%, 40s+ 27%)
 #   = 161.7cm
-# Range: Ably app review filter buckets (app screenshot confirmed)
+# Range: app review filter buckets (app screenshot confirmed)
 #   139cm이하 ~ 190cm이상 (12 buckets, 5cm step)
 HEIGHT_DIST = {
     "mean": 161.7,
@@ -92,12 +92,12 @@ HEIGHT_DIST = {
     "max": 190,
 }
 
-# Weight distribution (kg) — Korean female, Ably user age mix
+# Weight distribution (kg) — Korean female, platform user age mix
 # Source: NHIS Health Screening Statistics 2024
 #         (KOSIS, National Health Insurance Service, updated 2026-02-26)
 #   19y-: 60.25kg, 20s: 58.57kg, 30s: 60.19kg, 40s: 60.19kg
-#   Weighted avg by Ably age mix = 59.7kg
-# Range: Ably app review filter buckets (app screenshot confirmed)
+#   Weighted avg by platform age mix = 59.7kg
+# Range: app review filter buckets (app screenshot confirmed)
 #   39kg이하 ~ 90kg이상 (12 buckets, 5kg step)
 WEIGHT_DIST = {
     "mean": 59.7,
@@ -106,7 +106,7 @@ WEIGHT_DIST = {
     "max": 90,
 }
 
-# Height bucket edges — from Ably app review filter (screenshot confirmed)
+# Height bucket edges — from app review filter (screenshot confirmed)
 HEIGHT_BUCKETS = [
     "139cm 이하",
     "140cm-144cm", "145cm-149cm", "150cm-154cm",
@@ -115,7 +115,7 @@ HEIGHT_BUCKETS = [
     "185cm-189cm", "190cm 이상",
 ]
 
-# Weight bucket edges — from Ably app review filter (screenshot confirmed)
+# Weight bucket edges — from app review filter (screenshot confirmed)
 WEIGHT_BUCKETS = [
     "39kg 이하",
     "40kg-44kg", "45kg-49kg", "50kg-54kg",
@@ -124,7 +124,7 @@ WEIGHT_BUCKETS = [
     "85kg-89kg", "90kg 이상",
 ]
 
-# Clothing size options — from Ably app review filter (screenshot confirmed)
+# Clothing size options — from app review filter (screenshot confirmed)
 CLOTHING_SIZES = [
     "44 이하", "44반", "55", "55반", "66", "66반",
     "77", "77반", "88", "88반", "99 이상",

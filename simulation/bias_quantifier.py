@@ -1,4 +1,4 @@
-"""Self-selection bias quantifier. Compares effect estimates from self-selection (Ably lab toggle)"""
+"""Self-selection bias quantifier. Compares effect estimates from self-selection (in-app lab toggle)"""
 
 import os
 import sys
